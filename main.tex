@@ -216,4 +216,62 @@ def pz(particle: Particle) = match particle {
 \end{uncoverenv}
 \end{frame}
 
+\begin{frame}[fragile]{Toy language with particle pattern matching}
+\vspace{0.25 cm}
+\scriptsize
+\begin{Verbatim}[commandchars=\\\{\}]
+start:      (NEWLINE | ";")* (statement (NEWLINE | ";")+)* statement (NEWLINE | ";")*
+
+statement:  assignment | funcassign
+funcassign: CNAME "(" [CNAME ("," CNAME)*] ")" "=" block
+assignment: CNAME "=" expression
+
+patassign:  CNAME "=" expression
+          | CNAME "~" expression   -> symmetric
+          | CNAME "~~" expression  -> all_symmetric
+          | CNAME "!~" expression  -> asymmetric
+          | CNAME "!~~" expression -> all_asymmetric
+pattern:    (NEWLINE | ";")* (patassign (NEWLINE | ";")+)* patassign (NEWLINE | ";")*
+function:   paramlist "=>" block
+
+      \textcolor{darkblue}{... skip the boring part (standard expression grammar, same as Python) ...}
+
+atom:       CNAME -> symbol | INT -> int | FLOAT -> float
+          | "(" block ")" -> pass
+          | "{" pattern "}" -> pass
+          | "join" "{" pattern "}" -> join
+\end{Verbatim}
+
+\vspace{0.25 cm}
+\fbox{{\normalsize\mbox{See }}\textcolor{blue}{\url{https://github.com/diana-hep/rejig/blob/master/pattern-match/define-and-run.py}}}
+\end{frame}
+
+\begin{frame}[fragile]{Example: Higgs $\to$ ZZ $\to$ $4\ell$}
+\small
+\begin{minted}{swift}
+higgs(flavor1, flavor2) =
+    join {
+        z1 ~ {
+            lep1 ~ flavor1
+            lep2 ~ flavor1
+            mass = (lep1.p4 + lep2.p4).mass
+        }
+        z2 ~ {
+            lep1 ~ flavor2
+            lep2 ~ flavor2
+            mass = (lep1.p4 + lep2.p4).mass
+        }
+    }.filter(h => h.z1.lep1.charge != h.z1.lep2.charge and
+                  h.z2.lep1.charge != h.z2.lep2.charge)
+     .sort(h => (h.z1.mass - 91)**2 + (h.z2.mass - 91)**2)
+\end{minted}
+\begin{minted}{swift}
+higgs4e    = higgs(electrons, electrons)
+higgs4mu   = higgs(muons, muons)
+higgs2e2mu = higgs(electrons, muons)
+\end{minted}
+\end{frame}
+
+
+
 \end{document}

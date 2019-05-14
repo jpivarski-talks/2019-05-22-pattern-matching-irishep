@@ -720,15 +720,13 @@ The ASCII art of the decay would literally be the code used to match it.
 \normalsize
 \vspace{0.5 cm}
 \begin{Verbatim}[commandchars=\\\{\}]
-Higgs: \textcolor{blue}{sort} (Z1.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2 + (Z2.\textcolor{mauve}{mass} - \textcolor{darkorange}{91})**2
+Higgs: sort (Z1.mass - 91)**2 + (Z2.mass - 91)**2
    |
-   +--> Z1: \textcolor{blue}{cut} lep1.\textcolor{mauve}{charge} != lep2.\textcolor{mauve}{charge}
-   |     |
-   |     +--> lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep1, lep2 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+   +--> Z1: cut lep1.charge != lep2.charge
+   |     +--> lep1, lep2 in electrons or lep1, lep2 in muons
    |
-   +--> Z2: \textcolor{blue}{cut} lep3.\textcolor{mauve}{charge} != lep4.\textcolor{mauve}{charge}
-         |
-         +--> lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{electrons} \textcolor{blue}{or} lep3, lep4 \textcolor{blue}{in} \textcolor{darkgreen}{muons}
+   +--> Z2: cut lep3.charge != lep4.charge
+         +--> lep3, lep4 in electrons or lep3, lep4 in muons
 \end{Verbatim}
 
 \large

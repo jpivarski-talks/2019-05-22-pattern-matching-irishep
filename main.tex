@@ -11,7 +11,7 @@
   \setbeamertemplate{footline}[frame number]  % or "page number"
   \setbeamercolor{frametitle}{fg=white}
   \setbeamercolor{footline}{fg=black}
-} 
+}
 
 \usepackage[english]{babel}
 \usepackage[utf8x]{inputenc}
@@ -249,7 +249,7 @@ atom:       CNAME -> symbol | INT -> int | FLOAT -> float
 \begin{frame}[fragile]{Example: Higgs $\to$ ZZ $\to$ $4\ell$}
 \small
 \begin{minted}{swift}
-higgs(flavor1, flavor2) =       // define a function of a join pattern
+higgs(flavor1, flavor2) =       // define a join pattern in a function
     join {
         z1 ~ {                  // Z boson subpattern
             lep1 ~ flavor1      // lep1, lep2 from flavor1 collection
@@ -271,6 +271,285 @@ higgs4mu   = higgs(muons, muons)            // to match patterns
 higgs2e2mu = higgs(electrons, muons)
 \end{minted}
 \end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // cross-join of the two (distinct) input collections
+  a ~ x
+  b ~ y
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[(1.1, "one"),   (2.2, "one"),   (3.3, "one"),   (4.4, "one"),   (5.5, "one"),
+ (1.1, "two"),   (2.2, "two"),   (3.3, "two"),   (4.4, "two"),   (5.5, "two"),
+ (1.1, "three"), (2.2, "three"), (3.3, "three"), (4.4, "three"), (5.5, "three")]
+
+
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // inner join of one collection with uniqueness
+  a ~ x
+  b ~ x
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[            (1.1, 2.2), (1.1, 3.3), (1.1, 4.4), (1.1, 5.5),
+                         (2.2, 3.3), (2.2, 4.4), (2.2, 5.5),
+                                     (3.3, 4.4), (3.3, 5.5),
+                                                 (4.4, 5.5)]
+
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // two tildes means they don't need to be unique
+  a ~~ x
+  b ~~ x
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}{swift}
+[(1.1, 1.1), (1.1, 2.2), (1.1, 3.3), (1.1, 4.4), (1.1, 5.5),
+             (2.2, 2.2), (2.2, 3.3), (2.2, 4.4), (2.2, 5.5),
+                         (3.3, 3.3), (3.3, 4.4), (3.3, 5.5),
+                                     (4.4, 4.4), (4.4, 5.5),
+                                                 (5.5, 5.5)]
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // exclamation point-tilde (!~) means "not-symmetric"
+  a !~ x
+  b !~ x
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+\begin{minted}{swift}
+[            (1.1, 2.2), (1.1, 3.3), (1.1, 4.4), (1.1, 5.5),
+ (2.2, 1.1),             (2.2, 3.3), (2.2, 4.4), (2.2, 5.5),
+ (3.3, 1.1), (3.3, 2.2),             (3.3, 4.4), (3.3, 5.5),
+ (4.4, 1.1), (4.4, 2.2), (4.4, 3.3),             (4.4, 5.5),
+ (5.5, 1.1), (5.5, 2.2), (5.5, 3.3), (5.5, 4.4)            ]
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // being in distinct structures also breaks symmetry
+  a ~ x
+  b ~ { c ~ x }
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[            (1.1,(2.2)),(1.1,(3.3)),(1.1,(4.4)),(1.1,(5.5)),
+ (2.2,(1.1)),            (2.2,(3.3)),(2.2,(4.4)),(2.2,(5.5)),
+ (3.3,(1.1)),(3.3,(2.2)),            (3.3,(4.4)),(3.3,(5.5)),
+ (4.4,(1.1)),(4.4,(2.2)),(4.4,(3.3)),            (4.4,(5.5)),
+ (5.5,(1.1)),(5.5,(2.2)),(5.5,(3.3)),(5.5,(4.4))            ]
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // apply both operators for asymmetric, no-uniqueness
+  a !~~ x
+  b !~~ x
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+\begin{minted}{swift}
+[(1.1, 1.1), (1.1, 2.2), (1.1, 3.3), (1.1, 4.4), (1.1, 5.5),
+ (2.2, 1.1), (2.2, 2.2), (2.2, 3.3), (2.2, 4.4), (2.2, 5.5),
+ (3.3, 1.1), (3.3, 2.2), (3.3, 3.3), (3.3, 4.4), (3.3, 5.5),
+ (4.4, 1.1), (4.4, 2.2), (4.4, 3.3), (4.4, 4.4), (4.4, 5.5),
+ (5.5, 1.1), (5.5, 2.2), (5.5, 3.3), (5.5, 4.4), (5.5, 5.5)]
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // computing new fields doesn't change combinatorics
+  a ~ x
+  b ~ x
+  c = a * b
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[(1.1,2.2,2.42), (1.1,3.3,3.63), (1.1,4.4,4.84), (1.1,5.5,6.05),
+                 (2.2,3.3,7.26), (2.2,4.4,9.68), (2.2,5.5,12.1),
+                                 (3.3,4.4,14.5), (3.3,5.5,18.2),
+                                                 (4.4,5.5,24.2)]
+
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // not all fields need to be matches
+  a ~ x
+  b = y
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[(1.1, ["one", "two", "three"]),
+ (2.2, ["one", "two", "three"]),
+ (3.3, ["one", "two", "three"]),
+ (4.4, ["one", "two", "three"]),
+ (5.5, ["one", "two", "three"])]
+\end{minted}
+\end{frame}
+
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // in fact, none of them really need to be
+  a = x
+  b = y
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[([1.1, 2.2, 3.3, 4.4, 5.5], ["one", "two", "three"])]
+
+
+
+
+\end{minted}
+\end{frame}
+
 
 
 

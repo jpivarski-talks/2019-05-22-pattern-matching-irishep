@@ -316,7 +316,7 @@ y = ["one", "two", "three"]
 \textcolor{darkblue}{\large\bf Expression:}
 
 \begin{minted}{swift}
-join {    // inner join of one collection with uniqueness
+join {    // inner join of one collection requiring uniqueness
   a ~ x
   b ~ x
 }
@@ -347,7 +347,7 @@ y = ["one", "two", "three"]
 \textcolor{darkblue}{\large\bf Expression:}
 
 \begin{minted}{swift}
-join {    // two tildes means they don't need to be unique
+join {    // two tildes doesn't require uniqueness
   a ~~ x
   b ~~ x
 }
@@ -378,7 +378,7 @@ y = ["one", "two", "three"]
 \textcolor{darkblue}{\large\bf Expression:}
 
 \begin{minted}{swift}
-join {    // exclamation point-tilde (!~) means "not-symmetric"
+join {    // exclamation point means don't constrain symmetry
   a !~ x
   b !~ x
 }
@@ -408,21 +408,20 @@ y = ["one", "two", "three"]
 \textcolor{darkblue}{\large\bf Expression:}
 
 \begin{minted}{swift}
-join {    // being in distinct structures also breaks symmetry
-  a ~ x
-  b ~ { c ~ x }
+join {    // apply both operators for full generality
+  a !~~ x
+  b !~~ x
 }
 \end{minted}
 
 \vspace{0.25 cm}
 \textcolor{darkblue}{\large\bf Output:}
-
-\begin{minted}[stripnl=false]{swift}
-[            (1.1,(2.2)),(1.1,(3.3)),(1.1,(4.4)),(1.1,(5.5)),
- (2.2,(1.1)),            (2.2,(3.3)),(2.2,(4.4)),(2.2,(5.5)),
- (3.3,(1.1)),(3.3,(2.2)),            (3.3,(4.4)),(3.3,(5.5)),
- (4.4,(1.1)),(4.4,(2.2)),(4.4,(3.3)),            (4.4,(5.5)),
- (5.5,(1.1)),(5.5,(2.2)),(5.5,(3.3)),(5.5,(4.4))            ]
+\begin{minted}{swift}
+[(1.1, 1.1), (1.1, 2.2), (1.1, 3.3), (1.1, 4.4), (1.1, 5.5),
+ (2.2, 1.1), (2.2, 2.2), (2.2, 3.3), (2.2, 4.4), (2.2, 5.5),
+ (3.3, 1.1), (3.3, 2.2), (3.3, 3.3), (3.3, 4.4), (3.3, 5.5),
+ (4.4, 1.1), (4.4, 2.2), (4.4, 3.3), (4.4, 4.4), (4.4, 5.5),
+ (5.5, 1.1), (5.5, 2.2), (5.5, 3.3), (5.5, 4.4), (5.5, 5.5)]
 \end{minted}
 \end{frame}
 
@@ -439,20 +438,21 @@ y = ["one", "two", "three"]
 \textcolor{darkblue}{\large\bf Expression:}
 
 \begin{minted}{swift}
-join {    // apply both operators for asymmetric, no-uniqueness
-  a !~~ x
-  b !~~ x
+join {    // separate nested structures break the symmetry
+  a ~ x   // but uniqueness is global across the whole tree
+  b ~ { c ~ x }
 }
 \end{minted}
 
 \vspace{0.25 cm}
 \textcolor{darkblue}{\large\bf Output:}
-\begin{minted}{swift}
-[(1.1, 1.1), (1.1, 2.2), (1.1, 3.3), (1.1, 4.4), (1.1, 5.5),
- (2.2, 1.1), (2.2, 2.2), (2.2, 3.3), (2.2, 4.4), (2.2, 5.5),
- (3.3, 1.1), (3.3, 2.2), (3.3, 3.3), (3.3, 4.4), (3.3, 5.5),
- (4.4, 1.1), (4.4, 2.2), (4.4, 3.3), (4.4, 4.4), (4.4, 5.5),
- (5.5, 1.1), (5.5, 2.2), (5.5, 3.3), (5.5, 4.4), (5.5, 5.5)]
+
+\begin{minted}[stripnl=false]{swift}
+[            (1.1,(2.2)),(1.1,(3.3)),(1.1,(4.4)),(1.1,(5.5)),
+ (2.2,(1.1)),            (2.2,(3.3)),(2.2,(4.4)),(2.2,(5.5)),
+ (3.3,(1.1)),(3.3,(2.2)),            (3.3,(4.4)),(3.3,(5.5)),
+ (4.4,(1.1)),(4.4,(2.2)),(4.4,(3.3)),            (4.4,(5.5)),
+ (5.5,(1.1)),(5.5,(2.2)),(5.5,(3.3)),(5.5,(4.4))            ]
 \end{minted}
 \end{frame}
 

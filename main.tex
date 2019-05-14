@@ -32,10 +32,10 @@
 \definecolor{darkgreen}{rgb}{0,0.6,0}
 \definecolor{mauve}{rgb}{0.58,0,0.82}
 
-\title[yyyy-mm-dd-DESCRIPTION]{TITLE}
+\title[2019-05-22-pattern-matching-irishep]{Pattern matching for particle physics}
 \author{Jim Pivarski}
 \institute{Princeton University -- IRIS-HEP}
-\date{MONTH DAY, YEAR}
+\date{May 22, 2019}
 
 \usetikzlibrary{shapes.callouts}
 
@@ -56,9 +56,104 @@
 
 % START START START START START START START START START START START START START
 
-\begin{frame}{First slide}
+\begin{frame}{}
+\large
+\vspace{1.25 cm}
+Quite a few groups have been thinking about physics event processing languages, explicitly or implicitly.
+
+\vspace{0.25 cm}
+\begin{itemize}
+\item \textcolor{darkblue}{LHADA/ADL:} Sezen Sekmen, Harry Prosper, Philippe Gras
+\item \textcolor{darkblue}{CutLang:} Gokhan Unel
+\item \textcolor{darkblue}{IRIS-HEP Analysis Systems:} Gordon Watts, Mason Proffitt, Emma Torro
+\item \textcolor{darkblue}{FAST-Carpenter (YAML):} Benjamin Krikler
+\item \textcolor{darkblue}{NAIL:} Andrea Rizzi
+\item \textcolor{darkblue}{RDataFrame:} Enrico Guiraud, Danilo Piparo, and the ROOT Team
+\item \textcolor{darkblue}{AEACuS \& RHADAManTHUS:} Joel Walker (phenomenology)
+\item \textcolor{darkblue}{Femtocode:} me, though not for several years\ldots
+\end{itemize}
+
+\vspace{0.25 cm}
+\small \hfill see \textcolor{blue}{\href{https://indico.cern.ch/event/769263/timetable/}{Analysis Description Languages Workshop}} (May 6--8)
+\end{frame}
+
+\begin{frame}{}
+\Large
+\vspace{1.25 cm}
+\begin{columns}
+\column{0.87\linewidth}
+\begin{center}
+For a physics domain-specific language (DSL) to be useful, it has to solve \textcolor{darkblue}{physics problems} in a way that is clearly simpler than the general-purpose language.
+
+\vspace{1 cm}
+\uncover<2->{This is different from just being ``high-level,'' solving any problem with less baggage than a low-level language.}
+\end{center}
+\end{columns}
+\end{frame}
+
+\begin{frame}{What is difficult in physics analyses?}
+\large
 \vspace{0.5 cm}
-HERE
+\begin{itemize}\setlength{\itemsep}{0.35 cm}
+\item<1-> Distributing work to remote processors. General enough for a whole industry. (Spark, Parsl, Dask, Condor, Slurm\ldots)
+\item<1-> Interactive analysis, publication-quality plotting. Also very general. (Jupyter)
+\item<1-> Workflow management: chaining analysis tasks. General. (CWL, Makefile)
+\item<2-> Booking, filling, managing histograms. \textcolor{darkblue}{Physics specific!} (ROOT)
+\item<2-> Complex, multi-component distribution fitting. \textcolor{darkblue}{Physics specific!} (RooFit)
+\item<2-> Complex multi-histogram fitting. \textcolor{darkblue}{Physics specific!} (Combine, HistFactory)
+\item<3-> Signal/control regions, systematic variations. \textcolor{darkblue}{Physics specific!} (slide 2)
+\item<3-> Particle combinatorics: complex decay chains. \textcolor{darkblue}{Physics specific!} (???)
+\end{itemize}
+\end{frame}
+
+\begin{frame}[fragile]{Examples of pattern matching}
+\Large
+\vspace{0.25 cm}
+\textcolor{darkorange}{\bf Python:} (can only unpack iterables into tuples)
+
+\begin{center}
+\begin{minipage}{0.85\linewidth}
+\normalsize
+\begin{minted}{python}
+def tree():
+    return [[[1, 2], [3, 4]], [5, 6]]
+(((a, b), c), _) = tree()    # a → 1, b → 2, c → [3, 4]
+\end{minted}
+\end{minipage}
+\end{center}
+
+\vspace{0.35 cm}
+\begin{uncoverenv}<2->
+\textcolor{darkorange}{\bf Haskell:}
+
+\begin{center}
+\begin{minipage}{0.85\linewidth}
+\normalsize
+\begin{minted}{haskell}
+pz :: (Particle particle) => particle -> Float
+pz (Neutral pt eta _)   = pt * sinh(eta)
+pz (Charged pt eta _ q) = pt * sinh(eta)
+\end{minted}
+\end{minipage}
+\end{center}
+\end{uncoverenv}
+
+\vspace{0.35 cm}
+\begin{uncoverenv}<3->
+\textcolor{darkorange}{\bf Scala:}
+
+\begin{center}
+\begin{minipage}{0.85\linewidth}
+\normalsize
+\begin{minted}{scala}
+def pz(particle: Particle) = match particle {
+    case Neutral(pt, eta, _)    => pt * sinh(eta)
+    case Charged(pt, eta, _, q) => pt * sinh(eta)
+}
+\end{minted}
+\end{minipage}
+\end{center}
+\end{uncoverenv}
 \end{frame}
 
 \end{document}

@@ -106,6 +106,66 @@ For a physics domain-specific language (DSL) to be useful, it has to solve \text
 \end{itemize}
 \end{frame}
 
+\begin{frame}[fragile]{Particle combinatorics}
+\large
+\vspace{0.35 cm}
+Even a simple Z-peak requires combinatorics: don't double-count the muons!
+
+\normalsize
+\begin{minted}{c++}
+std::vector<Particle> Z;
+for (int i = 0;  i < muons.size();  i++)
+    for (int j = i + 1;  j < muons.size();  j++)  // not all j
+        Z.push_back(muons[i] + muons[j]);
+\end{minted}
+
+\large
+This is the reason we can't ``just use SQL/Numpy/MATLAB.''
+
+\vspace{0.25 cm}
+\begin{uncoverenv}<2->
+Awkward-Array addresses this with methods to generate per-event combinations.
+\begin{itemize}
+\item \mintinline{python}{A.cross(B)}: cross-join (Cartesian product) of \mintinline{python}{A} and \mintinline{python}{B}.
+\item \mintinline{python}{A.pairs()}: inner-join of \mintinline{python}{A} with itself, excluding duplicates.
+\item \mintinline{python}{A.distincts()}: inner-join of \mintinline{python}{A} with itself, also excluding $(A_i\mbox{, }A_i)$.
+\item \mintinline{python}{A.choose(n)}: like \mintinline{python}{distincts}, but for tuples of size $n \le 5$.
+\end{itemize}
+
+\vspace{0.25 cm}
+\textcolor{gray}{\normalsize (Cleverly implemented by Jaydeep Nandi and Nick Smith without internal for loops!)}
+\vspace{0.1 cm}
+\end{uncoverenv}
+\end{frame}
+
+\begin{frame}{But it's still not enough}
+\Large
+\vspace{0.25 cm}
+\begin{center}
+Building a complex decay chain using only these \\ combinatorial primitives would be a struggle.
+
+\vspace{0.5 cm}
+\includegraphics[width=0.5\linewidth]{decay-chain.png}
+\end{center}
+\end{frame}
+
+\begin{frame}{Pattern matching}
+\Large
+\vspace{0.35 cm}
+We want to fit a disconnected set of particles to a structured decay chain, which reminds me of pattern matching.
+
+\vspace{0.5 cm}
+\large
+\begin{uncoverenv}<2->
+Pattern matching is an uncommon programming language feature, like regular expressions, but for data structures: you make a model of what you want.
+
+\vspace{0.25 cm}
+\begin{center}
+\includegraphics[width=0.8\linewidth]{regex-example.png}
+\end{center}
+\end{uncoverenv}
+\end{frame}
+
 \begin{frame}[fragile]{Examples of pattern matching}
 \Large
 \vspace{0.25 cm}

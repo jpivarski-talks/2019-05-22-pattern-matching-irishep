@@ -249,25 +249,25 @@ atom:       CNAME -> symbol | INT -> int | FLOAT -> float
 \begin{frame}[fragile]{Example: Higgs $\to$ ZZ $\to$ $4\ell$}
 \small
 \begin{minted}{swift}
-higgs(flavor1, flavor2) =
+higgs(flavor1, flavor2) =       // define a function of a join pattern
     join {
-        z1 ~ {
-            lep1 ~ flavor1
-            lep2 ~ flavor1
+        z1 ~ {                  // Z boson subpattern
+            lep1 ~ flavor1      // lep1, lep2 from flavor1 collection
+            lep2 ~ flavor1      // leptons are NOT double-counted
             mass = (lep1.p4 + lep2.p4).mass
         }
-        z2 ~ {
-            lep1 ~ flavor2
-            lep2 ~ flavor2
+        z2 ~ {                  // another Z boson
+            lep1 ~ flavor2      // lep1, lep2 from flavor2, which
+            lep2 ~ flavor2      // might be the same as flavor1
             mass = (lep1.p4 + lep2.p4).mass
-        }
+        }                       // filter and sort with functionals
     }.filter(h => h.z1.lep1.charge != h.z1.lep2.charge and
                   h.z2.lep1.charge != h.z2.lep2.charge)
      .sort(h => (h.z1.mass - 91)**2 + (h.z2.mass - 91)**2)
 \end{minted}
 \begin{minted}{swift}
-higgs4e    = higgs(electrons, electrons)
-higgs4mu   = higgs(muons, muons)
+higgs4e    = higgs(electrons, electrons)    // use the function
+higgs4mu   = higgs(muons, muons)            // to match patterns
 higgs2e2mu = higgs(electrons, muons)
 \end{minted}
 \end{frame}

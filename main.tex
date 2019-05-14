@@ -576,6 +576,37 @@ join {    // in fact, none of them really need to be
 \end{minted}
 \end{frame}
 
+\begin{frame}[fragile]{Simpler, more pedagogical cases}
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Input:}
+
+\begin{minted}{swift}
+x = [1.1, 2.2, 3.3, 4.4, 5.5]
+y = ["one", "two", "three"]
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Expression:}
+
+\begin{minted}{swift}
+join {    // joins can be nested, but the matches don't mix
+  a = x
+  b = join { c ~ x }        // a and c can match the same x
+}
+\end{minted}
+
+\vspace{0.25 cm}
+\textcolor{darkblue}{\large\bf Output:}
+
+\begin{minted}[stripnl=false]{swift}
+[(1.1, [1.1, 2.2, 3.3, 4.4, 5.5]),
+ (2.2, [1.1, 2.2, 3.3, 4.4, 5.5]),
+ (3.3, [1.1, 2.2, 3.3, 4.4, 5.5]),
+ (4.4, [1.1, 2.2, 3.3, 4.4, 5.5]),
+ (5.5, [1.1, 2.2, 3.3, 4.4, 5.5])]
+\end{minted}
+\end{frame}
+
 \begin{frame}[fragile]{Back to example: Higgs $\to$ ZZ $\to$ $4\ell$}
 \small
 \begin{minted}{swift}
@@ -609,31 +640,27 @@ higgs2e2mu = higgs(electrons, muons)
 
 \vspace{-0.25 cm}
 \begin{columns}
-\column{0.8\linewidth}
+\column{0.9\linewidth}
 \begin{minted}{swift}
 cleanjets =
     join {
         jet ~ jets
-        nearby = join {
-            lepton ~ leptons
-        }.filter(x => delta_R(x.lepton, jet) < 0.5)
-    }.filter(x => len(x.nearby) > 0)
+        nearby = leptons.filter(lep => delta_R(lep, jet) < 0.5)
+    }.filter(x => len(x.nearby) == 0)
 \end{minted}
 \end{columns}
 
-\vspace{0.5 cm}
+\vspace{1 cm}
 \textcolor{darkblue}{\large Example: gen-reco matching}
 
 \vspace{-0.25 cm}
 \begin{columns}
-\column{0.8\linewidth}
+\column{0.9\linewidth}
 \begin{minted}{swift}
 cleanjets =
     join {
-        gen ~ generator
-        matched = join {
-            reco ~ reconstructed
-        }.sort(x => delta_R(x.reco, gen))[:1]   // zero or one
+        gen ~ gens
+        matched = recos.sort(x => delta_R(x.reco, gen))[:1]
     }.filter(x => len(x.matched) > 0)
 \end{minted}
 \end{columns}
